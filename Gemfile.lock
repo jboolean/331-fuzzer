@@ -24,6 +24,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.6)
+    uri-query_params (0.7.0)
     webrobots (0.1.1)
 
 PLATFORMS
@@ -31,3 +32,4 @@ PLATFORMS
 
 DEPENDENCIES
   mechanize
+  uri-query_params

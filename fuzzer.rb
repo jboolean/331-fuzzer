@@ -4,6 +4,7 @@ require 'set'
 
 require_relative 'crawlers/master'
 require_relative 'input_finders/master'
+require_relative 'input'
 
 
 class Fuzzer
@@ -11,9 +12,12 @@ class Fuzzer
 
   def initialize
     @master_crawler = MasterCrawler.new
+    @master_input_finder = MasterInputFinder.new
 
     # A set of URIs
     @urls = Set.new
+
+    @inputs = Set.new
   end
 
   def self.parse_args
@@ -66,12 +70,14 @@ class Fuzzer
   end
 
   def fuzz
-    options = Fuzzer.parse_args
-    crawl(options[:url])
+    @options = Fuzzer.parse_args
+    crawl(@options[:url])
 
     pp @urls
-    # find_inputs()
-    # print inputs
+    @urls.each {|url| find_inputs(url)}
+
+    pp @inputs
+
 
   end
 
@@ -86,6 +92,10 @@ class Fuzzer
       end
 
     end
+  end
+
+  def find_inputs(root)
+    @inputs.merge(@master_input_finder.discover_inputs(root))
   end
 
 end

@@ -1,4 +1,4 @@
-# Interface for a crawler
+# Interface for an input finder
 class InputFinder
 
   # url: a string of the  url

@@ -1,11 +1,20 @@
 require 'optparse'
 require 'pp'
+require 'set'
 
 require_relative 'crawlers/master'
 require_relative 'input_finders/master'
 
 
 class Fuzzer
+
+
+  def initialize
+    @master_crawler = MasterCrawler.new
+
+    # A set of URIs
+    @urls = Set.new
+  end
 
   def self.parse_args
     options = Hash.new
@@ -57,8 +66,28 @@ class Fuzzer
   end
 
   def fuzz
-    pp Fuzzer.parse_args
+    options = Fuzzer.parse_args
+    crawl(options[:url])
+
+    pp @urls
+    # find_inputs()
+    # print inputs
+
   end
+
+  # crawl deeply with the @master_crawler from root, adding to @urls.
+  def crawl(root)
+    new_urls = @master_crawler.discover_urls(root)
+
+    new_urls.each do |new_url|
+
+      unless @urls.add?(new_url).nil?
+        crawl(new_url)
+      end
+
+    end
+  end
+
 end
 
 fuzzer = Fuzzer.new

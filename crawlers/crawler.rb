@@ -1,7 +1,9 @@
+require 'set'
+
 # Interface for a crawler
 class Crawler
 
-  # root: a string of the root url
+  # root: a URI of the root url
   # Get an array of unique URLs available from the root url
   def discover_urls(root)
     abstract

@@ -73,16 +73,20 @@ class Fuzzer
     @options = Fuzzer.parse_args
     crawl(@options[:url])
 
-    pp @urls
+    @urls.each {|url| puts url}
+    
     @urls.each {|url| find_inputs(url)}
 
-    pp @inputs
+    @inputs.each {|input| puts input}
 
 
   end
 
   # crawl deeply with the @master_crawler from root, adding to @urls.
   def crawl(root)
+    root = URI(root) unless root.is_a?(URI)
+    @urls << root
+
     new_urls = @master_crawler.discover_urls(root)
 
     new_urls.each do |new_url|

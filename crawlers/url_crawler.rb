@@ -28,7 +28,7 @@ class URLCraweler < Crawler
       .keep_if {|l| !l.uri.nil?}
       .map {|l| URI.join(root, l.uri) }
 
-    Set.new resolved_uris.keep_if {|uri| uri.host == root.host}
+    Set.new resolved_uris.keep_if {|uri| uri.host == root.host} #don't go off the domain
   end
 
 

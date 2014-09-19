@@ -21,3 +21,20 @@ end
 
 class GETParamInput < Input
 end
+
+class FormFieldInput < Input
+  attr_reader :method
+  attr_reader :type
+  attr_reader :on_url
+
+  def initialize(uri, key, initial_value, field_type, method, on_url)
+    super(uri, key, initial_value)
+    @method = method
+    @field_type = field_type
+    @on_url = on_url
+  end
+
+  def to_s
+    "#{@method} #{key} to #{@uri} from #{@on_url}. Defaulted to \"#{@initial_value}\" from a #{@field_type} field."
+  end
+end

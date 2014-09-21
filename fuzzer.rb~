@@ -101,15 +101,7 @@ class Fuzzer
   end
 
   def loginBodgeIt(website)
-    agent = Mechanize/new
-    page = agent.get(website + 'login.jsp')
 
-    form = page.form()
-
-    #Not sure what the actual name and password are.
-    form.username = 'admin'
-    form.password = 'password'
-  end
 
   # crawl deeply with the @master_crawler from root, adding to @urls.
   def crawl(root)

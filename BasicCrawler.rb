@@ -1,13 +1,22 @@
 require 'rubygems'
 require 'mechanize'
+require 'open-uri'
 
 agent = Mechanize.new
 links = Hash.new
-website = ARGV[0]
+website = 'http://127.0.0.1/dvwa' #ARGV[0]
 
 puts website
 
 page = agent.get(website)
+
+form = page.form()
+
+form.username = 'admin'
+form.password = 'password'
+
+page = agent.submit(form, form.buttons.first)
+pp page
 
 page.links.each do |link|
 	links[link.text] = link.uri

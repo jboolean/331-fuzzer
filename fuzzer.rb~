@@ -80,11 +80,10 @@ class Fuzzer
 
     crawl(@options[:url])
 
-    @urls.each {|url| puts url}
-    
+    pp @urls
     @urls.each {|url| find_inputs(url)}
 
-    @inputs.each {|input| puts input}
+    pp @inputs
 
 
   end
@@ -102,21 +101,10 @@ class Fuzzer
   end
 
   def loginBodgeIt(website)
-    agent = Mechanize/new
-    page = agent.get(website + 'login.jsp')
 
-    form = page.form()
-
-    #Not sure what the actual name and password are.
-    form.username = 'admin'
-    form.password = 'password'
-  end
 
   # crawl deeply with the @master_crawler from root, adding to @urls.
   def crawl(root)
-    root = URI(root) unless root.is_a?(URI)
-    @urls << root
-
     new_urls = @master_crawler.discover_urls(root)
 
     new_urls.each do |new_url|

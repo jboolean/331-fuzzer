@@ -72,10 +72,9 @@ class Fuzzer
   def fuzz
     @options = Fuzzer.parse_args
 
-    cust_auth = @options[:custom_auth]
-
-    if(cust_auth == 'dvwa')
-	loginDVWA(@options[:url])
+    case @options[:custom_auth]
+    when 'dvwa'
+      loginDVWA(@options[:url])
     end
 
     crawl(@options[:url])
@@ -91,7 +90,7 @@ class Fuzzer
 
   def loginDVWA(website)
     agent = Mechanize.new
-    page = agent.get(website)
+    page = agent.get('http://129.0.0.1/dvwa/index.php')
 
     form = page.form()
 	
@@ -102,8 +101,8 @@ class Fuzzer
   end
 
   def loginBodgeIt(website)
-    agent = Mechanize/new
-    page = agent.get(website + 'login.jsp')
+    agent = Mechanize.new
+    page = agent.get('http://127.0.0.1:8080/bodgeit/login.jsp')
 
     form = page.form()
 

@@ -13,7 +13,10 @@ class CookieFinder < InputFinder
   # return a set of Inputs
   def discover_inputs(root)
     jar = $agent.cookie_jar.jar
-    puts jar
+    inputs = Set.new
+    jar.each do |cookie|
+      inputs << CookieInput.new(nil, cookie.name, cookie.value)
+    end
     # TODO: Create inputs from cookies
     Set.new
 

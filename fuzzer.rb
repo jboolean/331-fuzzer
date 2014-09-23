@@ -90,7 +90,7 @@ class Fuzzer
 
     crawl(@options[:url])
 
-    loginDVWA
+    puts "\n"*5
 
     puts 'Links'
     @urls.each {|url| puts url}

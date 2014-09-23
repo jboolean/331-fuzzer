@@ -3,6 +3,7 @@ require 'pp'
 require 'set'
 
 require_relative 'crawlers/master'
+require_relative 'crawlers/page_guesser'
 require_relative 'input_finders/master'
 require_relative 'input'
 
@@ -85,6 +86,8 @@ class Fuzzer
       exit      
     end
 
+    crawl_word_list(@options[:url])
+
     crawl(@options[:url])
 
     @urls.each {|url| puts url}
@@ -94,6 +97,15 @@ class Fuzzer
     @inputs.each {|input| puts input}
 
 
+  end
+
+  def crawl_word_list(root)
+    words = File.readlines(@options[:words_file])
+    words.each {|word| word.strip!}
+
+    guesser = PageGuesser.new(words)
+
+    @urls.merge(guesser.discover_urls(root))
   end
 
   def loginDVWA

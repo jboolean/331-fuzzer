@@ -11,6 +11,7 @@ class Fuzzer
 
 
   def initialize
+    $agent = Mechanize.new
     @master_crawler = MasterCrawler.new
     @master_input_finder = MasterInputFinder.new
 
@@ -89,26 +90,28 @@ class Fuzzer
   end
 
   def loginDVWA(website)
-    agent = Mechanize.new
-    page = agent.get('http://129.0.0.1/dvwa/index.php')
+    page = $agent.get(website)
+    #page = $agent.get('http://129.0.0.1/dvwa/')
 
     form = page.form()
 	
     form.username = 'admin'
     form.password = 'password'
 
-    page = agent.submit(form, form.buttons.first)
+    page = $agent.submit(form, form.buttons.first)
   end
 
   def loginBodgeIt(website)
-    agent = Mechanize.new
-    page = agent.get('http://127.0.0.1:8080/bodgeit/login.jsp')
+    page = $agent.get(website + 'login.jsp')
+    #page = $agent.get('http://127.0.0.1:8080/bodgeit/login.jsp')
 
     form = page.form()
 
     #Not sure what the actual name and password are.
     form.username = 'admin'
     form.password = 'password'
+
+    page = $agent.submit(form, form.buttons.first)
   end
 
   # crawl deeply with the @master_crawler from root, adding to @urls.
@@ -120,9 +123,11 @@ class Fuzzer
 
     new_urls.each do |new_url|
 
-      unless @urls.add?(new_url).nil?
-        crawl(new_url)
-      end
+      #if(!new_url.include? 'logout')
+        unless @urls.add?(new_url).nil?
+          crawl(new_url)
+        end
+      #end
 
     end
   end

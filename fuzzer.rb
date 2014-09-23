@@ -74,8 +74,15 @@ class Fuzzer
     @options = Fuzzer.parse_args
 
     case @options[:custom_auth]
+    when nil
+      # continue
     when 'dvwa'
-      loginDVWA(@options[:url])
+      loginDVWA
+    when 'bodgit'
+      loginBodgeIt
+    else
+      puts "Not a valid authentication type: #{@options[:custom_auth]}"
+      exit      
     end
 
     crawl(@options[:url])
@@ -89,7 +96,7 @@ class Fuzzer
 
   end
 
-  def loginDVWA(website)
+  def loginDVWA
     # page = $agent.get(website)
     page = $agent.get('http://127.0.0.1:8000/dvwa/')
 
@@ -101,7 +108,7 @@ class Fuzzer
     page = $agent.submit(form, form.buttons.first)
   end
 
-  def loginBodgeIt(website)
+  def loginBodgeIt
     # page = $agent.get(website + 'login.jsp')
     page = $agent.get('http://127.0.0.1:8080/bodgeit/login.jsp')
 

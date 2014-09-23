@@ -43,4 +43,7 @@ class FormFieldInput < Input
 end
 
 class CookieInput < Input
+	def to_s
+		"Cookie #{key} from #{uri} with value #{initial_value}"
+	end
 end

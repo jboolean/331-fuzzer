@@ -16,13 +16,17 @@ form.username = 'admin'
 form.password = 'password'
 
 page = agent.submit(form, form.buttons.first)
-pp page
+#pp page
+
+agent.cookies.each do |cookie|
+	pp cookie
+end
 
 page.links.each do |link|
 	links[link.text] = link.uri
 end
 
-links.each do |key, value|
-	puts key
-	puts value
-end
+#links.each do |key, value|
+#	puts key
+#	puts value
+#end

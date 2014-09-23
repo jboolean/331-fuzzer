@@ -35,3 +35,4 @@ build/
 
 # something on Justin's computer
 *~
+*.swp

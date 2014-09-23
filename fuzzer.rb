@@ -86,7 +86,7 @@ class Fuzzer
       exit      
     end
 
-    crawl_word_list(@options[:url])
+    #crawl_word_list(@options[:url])
 
     crawl(@options[:url])
 
@@ -112,7 +112,7 @@ class Fuzzer
 
   def loginDVWA
     # page = $agent.get(website)
-    page = $agent.get('http://127.0.0.1:8000/dvwa/')
+    page = $agent.get('http://127.0.0.1/dvwa/')
 
     form = page.form()
 	
@@ -144,11 +144,9 @@ class Fuzzer
 
     new_urls.each do |new_url|
 
-      #if(!new_url.include? 'logout')
-        unless @urls.add?(new_url).nil?
-          crawl(new_url)
-        end
-      #end
+      unless @urls.add?(new_url).nil?
+        crawl(new_url)
+      end
 
     end
   end

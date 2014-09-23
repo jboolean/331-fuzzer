@@ -26,7 +26,7 @@ page.links.each do |link|
 	links[link.text] = link.uri
 end
 
-#links.each do |key, value|
-#	puts key
-#	puts value
-#end
+links.each do |key, value|
+	puts key
+	puts value
+end

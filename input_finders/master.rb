@@ -7,7 +7,7 @@ require_relative 'cookie_finder'
 class MasterInputFinder < InputFinder
 
   def initialize
-    @input_finders = [GETParamInputFinder.new, FormParamInputFinder.new, CookieFinder.new]
+    @input_finders = [GETParamInputFinder.new, FormParamInputFinder.new] #TODO add CookieFinder once it is complete
   end
 
   # Call all the input finders and aggregate the results

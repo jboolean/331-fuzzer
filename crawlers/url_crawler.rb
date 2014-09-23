@@ -24,10 +24,11 @@ class URLCraweler < Crawler
       return Set.new
     end
 
-    page.links.each do |link|
-	puts link.uri
-	#puts URI.join(root, link.uri)
-    end
+    root = URI('http://127.0.0.1/dvwa/')
+
+    #page.links.each do |link|
+    #  puts link.uri
+    #end
 
     resolved_uris = page.links
       .keep_if {|l| !l.uri.nil?}

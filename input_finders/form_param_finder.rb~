@@ -5,16 +5,16 @@ require 'pp'
 # An input finder that finds GET parameters on a URL
 class FormParamInputFinder < InputFinder
 
-  #def initialize
-  #  @agent = Mechanize.new
-  #end
+  def initialize
+    @agent = Mechanize.new
+  end
 
   # Call all the input finders and aggregate the results
   # return a set of Inputs
   def discover_inputs(root)
 
     begin
-      page = $agent.get(root)
+      page = @agent.get(root)
       # root = page.canonical_uri
     rescue Mechanize::ResponseCodeError => e
       puts e

@@ -15,6 +15,7 @@ class URLCraweler < Crawler
   # Get an array of unique URLs available from the root url
   def discover_urls(root)
     root = URI(root) unless root.is_a? URI
+    puts root
 
     begin
       page = $agent.get(root)

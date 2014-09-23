@@ -27,7 +27,7 @@ class URLCraweler < Crawler
 
     #calling page.canonical_uri sets root to nil which cause URI.join to error out.
     #Hard coding value to avoid this error for now.
-    root = URI('http://127.0.0.1:8080/bodgeit/')
+    root = URI('http://127.0.0.1/dvwa')
 
     #page.links.each do |link|
     #  puts link.uri

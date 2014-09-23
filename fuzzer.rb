@@ -90,6 +90,8 @@ class Fuzzer
 
     crawl(@options[:url])
 
+   puts "\n"*5
+
     puts 'Links'
     @urls.each {|url| puts url}
     
@@ -99,7 +101,7 @@ class Fuzzer
     @inputs.each {|input| puts input}
 
     puts 'Cookies'
-    $agent.cookies.each{|cookie| pp cookie}
+    # $agent.cookies.each{|cookie| pp cookie}
 
 
   end

@@ -14,6 +14,7 @@ class URLCraweler < Crawler
   # root: a URI of the root url
   # Get an array of unique URLs available from the root url
   def discover_urls(root)
+    puts "Crawling #{root.to_s}"
     root = URI(root) unless root.is_a? URI
 
     begin

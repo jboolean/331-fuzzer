@@ -41,3 +41,6 @@ class FormFieldInput < Input
     "#{@method} #{key} to #{@uri} from #{@on_url}. Defaulted to \"#{@initial_value}\" from a #{@field_type} field."
   end
 end
+
+class CookieInput < Input
+end

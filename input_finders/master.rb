@@ -2,12 +2,13 @@ require_relative 'input_finder'
 require_relative 'get_param_finder'
 require_relative 'form_param_finder'
 require_relative 'cookie_finder'
+require_relative '../input'
 
 # An input finder that aggregates the results of all the other input finders
 class MasterInputFinder < InputFinder
 
   def initialize
-    @input_finders = [GETParamInputFinder.new, FormParamInputFinder.new] #TODO add CookieFinder once it is complete
+    @input_finders = [GETParamInputFinder.new, FormParamInputFinder.new, CookieFinder.new] #TODO add CookieFinder once it is complete
   end
 
   # Call all the input finders and aggregate the results

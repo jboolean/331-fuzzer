@@ -91,6 +91,7 @@ class Fuzzer
 
   def loginDVWA(website)
     page = $agent.get(website)
+    #page = $agent.get('http://129.0.0.1/dvwa/')
 
     form = page.form()
 	
@@ -102,6 +103,7 @@ class Fuzzer
 
   def loginBodgeIt(website)
     page = $agent.get(website + 'login.jsp')
+    #page = $agent.get('http://127.0.0.1:8080/bodgeit/login.jsp')
 
     form = page.form()
 

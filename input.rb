@@ -14,7 +14,7 @@ class Input
 
   # Override to provide better human readable description of
   def to_s
-    {:type => self.class.name, :uri => uri, :key => key, :initial_value => initial_value}.to_s
+    {:type => self.class.name, :uri => @uri, :key => @key, :initial_value => @initial_value}.to_s
   end
 
 end
@@ -47,6 +47,10 @@ class CookieInput < Input
 		"Cookie #{key} from #{uri} with value #{initial_value}"
 	end
   def hash
-    {:type => self.class.name, :uri => uri, :key => key, :initial_value => initial_value}.hash
+    {:type => self.class.name, :uri => @uri, :key => @key, :initial_value => @initial_value}.hash
+  end
+  
+  def eql?(other)
+	hash == other.hash
   end
 end

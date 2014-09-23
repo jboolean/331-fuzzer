@@ -20,7 +20,7 @@ class URLCraweler < Crawler
       page = $agent.get(root)
       root = page.canonical_uri
     rescue Mechanize::ResponseCodeError => e
-      puts e
+      #puts e
       return Set.new
     end
 

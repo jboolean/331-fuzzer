@@ -86,16 +86,19 @@ class Fuzzer
       exit      
     end
 
-    #crawl_word_list(@options[:url])
+    #crawl_word_list(@options[:words_file])
 
     crawl(@options[:url])
 
+    puts 'Links'
     @urls.each {|url| puts url}
     
     @urls.each {|url| find_inputs(url)}
 
+    puts 'Inputs'
     @inputs.each {|input| puts input}
 
+    puts 'Cookies'
     $agent.cookies.each{|cookie| pp cookie}
 
 
@@ -111,7 +114,6 @@ class Fuzzer
   end
 
   def loginDVWA
-    # page = $agent.get(website)
     page = $agent.get('http://127.0.0.1/dvwa/')
 
     form = page.form()
@@ -123,7 +125,6 @@ class Fuzzer
   end
 
   def loginBodgeIt
-    # page = $agent.get(website + 'login.jsp')
     page = $agent.get('http://127.0.0.1:8080/bodgeit/login.jsp')
 
     form = page.form()

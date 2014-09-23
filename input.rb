@@ -20,6 +20,9 @@ class Input
 end
 
 class GETParamInput < Input
+  def to_s
+    "GET url parameter on #{uri} with key=#{@key}, defaulted to #{@initial_value}"
+  end
 end
 
 class FormFieldInput < Input

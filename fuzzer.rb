@@ -86,6 +86,8 @@ class Fuzzer
 
     @inputs.each {|input| puts input}
 
+    $agent.cookies.each{|cookie| pp cookie}
+
 
   end
 

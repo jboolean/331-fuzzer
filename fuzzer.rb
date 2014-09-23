@@ -100,10 +100,8 @@ class Fuzzer
     puts 'Inputs'
     @inputs.each {|input| puts input}
 
-    puts 'Cookies'
-    $agent.cookies.each{|cookie| pp cookie}
-
-
+    #puts 'Cookies'
+    #$agent.cookies.each{|cookie| pp cookie}
   end
 
   def crawl_word_list(root)

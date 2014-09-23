@@ -43,4 +43,10 @@ class FormFieldInput < Input
 end
 
 class CookieInput < Input
+	def to_s
+		"Cookie #{key} from #{uri} with value #{initial_value}"
+	end
+  def hash
+    {:type => self.class.name, :uri => uri, :key => key, :initial_value => initial_value}.hash
+  end
 end

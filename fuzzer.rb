@@ -108,7 +108,7 @@ class Fuzzer
     root = URI(root) unless root.is_a?(URI)
     $urls << root
 
-    new_urls = @master_crawler.discover_urls(root, @options[:url])
+    new_urls = @master_crawler.discover_urls(root)
 
     new_urls.each do |new_url|
 
@@ -133,7 +133,7 @@ class Fuzzer
         # continue
       when 'dvwa'
         loginDVWA
-      when 'bodgit'
+      when 'bodgeit'
         loginBodgeIt
       else
         puts "Not a valid authentication type: #{@options[:custom_auth]}"
@@ -148,20 +148,20 @@ class Fuzzer
 
     crawl(@options[:url])
 
-    puts "\n"*5
+    puts "\n"*2
 
     puts 'Links'
     $urls.each {|url| puts url}
 
-    puts "\n"*5
+    puts "\n"*2
 
     $urls.each {|url| find_inputs(url)}
 
     puts 'Inputs'
-    @inputs.each {|input| puts input}
+    @inputs
+    .sort_by {|i| i.class.to_s}
+    .each {|input| puts input}
 
-    #puts 'Cookies'
-    #$agent.cookies.each{|cookie| pp cookie}
   end
 
 end

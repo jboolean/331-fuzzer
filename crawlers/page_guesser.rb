@@ -8,7 +8,7 @@ require_relative 'crawler'
 class PageGuesser < Crawler
 
   def initialize(words)
-    @extensions = [nil, 'php', 'html', 'jsp']
+    @extensions = [nil, 'php', 'html', 'jsp', 'action']
     @words = words
   end
 

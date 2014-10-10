@@ -10,10 +10,10 @@ class MasterCrawler < Crawler
 
   # Call all the crawlers and aggregate the results
   # return a set of URIs
-  def discover_urls(root, host)
+  def discover_urls(root)
     @urls = Set.new
     @crawlers.each do |crawler|
-      @urls.merge crawler.discover_urls(root, host)
+      @urls.merge crawler.discover_urls(root)
     end
     return @urls
   end

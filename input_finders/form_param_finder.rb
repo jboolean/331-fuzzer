@@ -26,7 +26,7 @@ class FormParamInputFinder < InputFinder
 
 
       form.fields.each do |form_field|
-        inputs << FormFieldInput.new(action_resolved, form_field.name, form_field.value, form_field.type, method, root)
+        inputs << FormFieldInput.new(action_resolved, form_field.name, form_field.type, method)
       end
     end
 

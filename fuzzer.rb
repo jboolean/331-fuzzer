@@ -97,8 +97,8 @@ class Fuzzer
     form = page.form()
 
     #Not sure what the actual name and password are.
-    form.username = 'admin'
-    form.password = 'password'
+    form.username = ''
+    form.password = "' or userid = 3 or 'x' = '"
 
     $agent.submit(form, form.buttons.first)
   end
@@ -140,11 +140,11 @@ class Fuzzer
         exit
     end
 
-    unless @options[:url].to_s.end_with? '/'
-      @options[:url] = @options[:url].to_s + '/'
-    end
+    # unless @options[:url].to_s.end_with? '/'
+    #   @options[:url] = @options[:url].to_s + '/'
+    # end
 
-    #crawl_word_list(@options[:words_file])
+    # crawl_word_list(@options[:words_file])
 
     crawl(@options[:url])
 

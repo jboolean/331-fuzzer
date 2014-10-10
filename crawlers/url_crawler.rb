@@ -27,7 +27,7 @@ class URLCraweler < Crawler
 
     resolved_uris = page.links
       .keep_if {|l| !l.uri.nil?}
-      .map {|l| URI.join(root.to_s , l.uri) }
+      .map {|l| URI.join(page.uri.to_s , l.uri) }
 
     #don't go off the domain or include duplicates
     Set.new resolved_uris.keep_if {|uri| uri.host == root.host}

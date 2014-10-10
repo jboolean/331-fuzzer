@@ -33,6 +33,6 @@ class URLCraweler < Crawler
       .map {|l| URI.join(rootLocal.to_s , l.uri) }
 
     #don't go off the domain or include duplicates
-    Set.new resolved_uris.keep_if {|uri| uri.to_s.include? host}
+    Set.new resolved_uris.keep_if {|uri| uri.to_s.start_with? host}
   end
 end

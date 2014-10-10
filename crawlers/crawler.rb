@@ -4,8 +4,9 @@ require 'set'
 class Crawler
 
   # root: a URI of the root url
+  # host: the website to stay on
   # Get an array of unique URLs available from the root url
-  def discover_urls(root)
+  def discover_urls(root, host)
     abstract
   end
 

@@ -14,7 +14,7 @@ class CookieFinder < InputFinder
   def discover_inputs(root)	
     inputs = Set.new
     $agent.cookies.each do |cookie|
-	  inputs << CookieInput.new(cookie.origin, cookie.name, cookie.value)
+	    inputs << CookieInput.new(cookie.origin, cookie.name, cookie.value)
     end
     inputs
 

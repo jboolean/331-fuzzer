@@ -7,11 +7,8 @@ require_relative 'crawler'
 # Interface for a crawler
 class URLCraweler < Crawler
 
-  #def initialize
-  #  @agent = Mechanize.new
-  #end
-
   # root: a URI of the root url
+  # host: the website to stay on
   # Get an array of unique URLs available from the root url
   def discover_urls(root, host)
     puts "Crawling #{root.to_s}"
@@ -30,10 +27,6 @@ class URLCraweler < Crawler
       #puts e
       return Set.new
     end
-
-    #calling page.canonical_uri sets root to nil which cause URI.join to error out.
-    #Hard coding value to avoid this error for now.
-    #rootLocal = URI('http://127.0.0.1/dvwa/')
 
     resolved_uris = page.links
       .keep_if {|l| !l.uri.nil?}

@@ -5,10 +5,6 @@ require 'pp'
 # An input finder that finds GET parameters on a URL
 class FormParamInputFinder < InputFinder
 
-  #def initialize
-  #  @agent = Mechanize.new
-  #end
-
   # Call all the input finders and aggregate the results
   # return a set of Inputs
   def discover_inputs(root)

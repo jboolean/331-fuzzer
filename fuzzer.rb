@@ -17,7 +17,7 @@ class Fuzzer
     @master_input_finder = MasterInputFinder.new
 
     # A set of URIs
-    @urls = Set.new
+    $urls = Set.new
 
     @inputs = Set.new
   end
@@ -71,46 +71,13 @@ class Fuzzer
 
   end
 
-  def fuzz
-    @options = Fuzzer.parse_args
-
-    case @options[:custom_auth]
-    when nil
-      # continue
-    when 'dvwa'
-      loginDVWA
-    when 'bodgit'
-      loginBodgeIt
-    else
-      puts "Not a valid authentication type: #{@options[:custom_auth]}"
-      exit      
-    end
-
-    #crawl_word_list(@options[:words_file])
-
-    crawl(@options[:url])
-
-    puts "\n"*5
-
-    puts 'Links'
-    @urls.each {|url| puts url}
-    
-    @urls.each {|url| find_inputs(url)}
-
-    puts 'Inputs'
-    @inputs.each {|input| puts input}
-
-    #puts 'Cookies'
-    #$agent.cookies.each{|cookie| pp cookie}
-  end
-
   def crawl_word_list(root)
     words = File.readlines(@options[:words_file])
     words.each {|word| word.strip!}
 
     guesser = PageGuesser.new(words)
 
-    @urls.merge(guesser.discover_urls(root))
+    $urls.merge(guesser.discover_urls(root))
   end
 
   def loginDVWA
@@ -121,7 +88,7 @@ class Fuzzer
     form.username = 'admin'
     form.password = 'password'
 
-    page = $agent.submit(form, form.buttons.first)
+    $agent.submit(form, form.buttons.first)
   end
 
   def loginBodgeIt
@@ -133,20 +100,22 @@ class Fuzzer
     form.username = 'admin'
     form.password = 'password'
 
-    page = $agent.submit(form, form.buttons.first)
+    $agent.submit(form, form.buttons.first)
   end
 
   # crawl deeply with the @master_crawler from root, adding to @urls.
   def crawl(root)
     root = URI(root) unless root.is_a?(URI)
-    @urls << root
+    $urls << root
 
-    new_urls = @master_crawler.discover_urls(root)
+    new_urls = @master_crawler.discover_urls(root, @options[:url])
 
     new_urls.each do |new_url|
 
-      unless @urls.add?(new_url).nil?
-        crawl(new_url)
+      unless $urls.add?(new_url).nil?
+        if !new_url.to_s.include? 'logout'
+          crawl(new_url)
+        end
       end
 
     end
@@ -154,6 +123,45 @@ class Fuzzer
 
   def find_inputs(root)
     @inputs.merge(@master_input_finder.discover_inputs(root))
+  end
+
+  def fuzz
+    @options = Fuzzer.parse_args
+
+    case @options[:custom_auth]
+      when nil
+        # continue
+      when 'dvwa'
+        loginDVWA
+      when 'bodgit'
+        loginBodgeIt
+      else
+        puts "Not a valid authentication type: #{@options[:custom_auth]}"
+        exit
+    end
+
+    #crawl_word_list(@options[:words_file])
+
+    crawl(@options[:url])
+
+    $urls.each do |url|
+      URI.parse(url)
+    end
+
+    puts "\n"*5
+
+    puts 'Links'
+    $urls.each {|url| puts url}
+
+    puts "\n"*5
+
+    $urls.each {|url| find_inputs(url)}
+
+    puts 'Inputs'
+    @inputs.each {|input| puts input}
+
+    #puts 'Cookies'
+    #$agent.cookies.each{|cookie| pp cookie}
   end
 
 end

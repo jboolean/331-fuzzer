@@ -22,7 +22,7 @@ class URLCraweler < Crawler
 
     begin
       page = $agent.get(rootLocal)
-      #root = page.canonical_uri
+      # root = page.canonical_uri
     rescue Mechanize::ResponseCodeError => e
       #puts e
       return Set.new

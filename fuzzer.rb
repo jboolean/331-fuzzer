@@ -144,10 +144,6 @@ class Fuzzer
 
     crawl(@options[:url])
 
-    $urls.each do |url|
-      URI.parse(url)
-    end
-
     puts "\n"*5
 
     puts 'Links'

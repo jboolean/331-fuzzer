@@ -140,13 +140,15 @@ class Fuzzer
         exit
     end
 
+    unless @options[:url].to_s.end_with? '/'
+      @options[:url] = @options[:url].to_s + '/'
+    end
+
     #crawl_word_list(@options[:words_file])
 
-    crawl(@options[:url])
+    @options[:url]
 
-    $urls.each do |url|
-      URI.parse(url)
-    end
+    crawl(@options[:url])
 
     puts "\n"*5
 

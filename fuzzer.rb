@@ -144,14 +144,14 @@ class Fuzzer
 
     puts "\n"*2
 
-    puts 'Links'
+    puts "Links\n#{"="*6}"
     $urls.each {|url| puts url}
 
     puts "\n"*2
 
     $urls.each {|url| find_inputs(url)}
 
-    puts 'Inputs'
+    puts "Inputs\n#{"="*6}"
     @inputs
     .sort
     .each {|input| puts input}

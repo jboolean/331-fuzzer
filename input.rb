@@ -1,12 +1,11 @@
 #intended to be subclassed by specific kinds of inputs
 class Input
+  include Comparable
   attr_reader :uri
-  # attr_reader :type
   attr_reader :key
 
   def initialize(uri, key)
     @uri = uri
-    # @type = type
     @key = key
   end
 
@@ -23,27 +22,34 @@ class Input
     hash == other.hash
   end
 
-end
-
-class GETParamInput < Input
-  def to_s
-    "GET \"#{@key}\" parameter to #{@uri}"
-  end
-end
-
-class FormFieldInput < Input
-  attr_reader :method
-  attr_reader :type
-  attr_reader :on_url
-
-  def initialize(uri, key, field_type, method)
-    super(uri, key)
-    @method = method
-    @field_type = field_type
+  def <=>(other)
+    urlComp = uri.to_s <=> other.uri.to_s
+    return urlComp unless urlComp == 0
+    classComp = self.class.name <=> other.class.name
+    return classComp unless classComp == 0
+    return key <=> other.key      
   end
 
+end
+
+class HTTPParamInput < Input
+  attr_reader :verb
+
+  def initialize(uri, key, method)
+
+    #remove params and hash from uri
+    noParamUri = uri.to_s.sub(/[\?#].*$/, '')
+
+    super(noParamUri, key)
+    @verb = method
+  end
+
   def to_s
-    "#{@method} \"#{key}\" to #{@uri} from a #{@field_type} field."
+    "#{@verb} \"#{key}\" to #{@uri}"
+  end
+
+  def hash
+    {:uri => @uri, :key => @key, :type => self.class, :verb => @verb}.hash
   end
 end
 

@@ -10,10 +10,9 @@ class GETParamInputFinder < InputFinder
     root = URI(root) unless root.is_a?(URI)
 
     inputs = Set.new
-    rootNoParam = root.to_s.sub(/\?[^\?].*$/, '')
 
     root.query_params.each do |k, v|
-      inputs << GETParamInput.new(rootNoParam, k)
+      inputs << HTTPParamInput.new(root, k, :GET)
     end
 
     inputs

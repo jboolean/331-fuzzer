@@ -140,12 +140,6 @@ class Fuzzer
         exit
     end
 
-    # unless @options[:url].to_s.end_with? '/'
-    #   @options[:url] = @options[:url].to_s + '/'
-    # end
-
-    # crawl_word_list(@options[:words_file])
-
     crawl(@options[:url])
 
     puts "\n"*2
@@ -159,7 +153,7 @@ class Fuzzer
 
     puts 'Inputs'
     @inputs
-    .sort_by {|i| i.class.to_s}
+    .sort
     .each {|input| puts input}
 
   end

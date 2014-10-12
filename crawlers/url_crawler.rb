@@ -5,7 +5,7 @@ require_relative 'crawler'
 
 
 # Interface for a crawler
-class URLCraweler < Crawler
+class URLCrawler < Crawler
 
   # root: a URI of the root url
   # host: the website to stay on
@@ -24,7 +24,7 @@ class URLCraweler < Crawler
       page = $agent.get(rootLocal)
       #root = page.canonical_uri
     rescue Mechanize::ResponseCodeError => e
-      #puts e
+      puts e
       return Set.new
     end
 

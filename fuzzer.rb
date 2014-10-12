@@ -116,6 +116,7 @@ class Fuzzer
         if !new_url.to_s.include? 'logout'
           crawl(new_url)
         end
+
       end
 
     end

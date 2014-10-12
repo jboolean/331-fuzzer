@@ -5,7 +5,7 @@ require_relative 'url_crawler'
 class MasterCrawler < Crawler
 
   def initialize
-    @crawlers = [URLCraweler.new]
+    @crawlers = [URLCrawler.new]
   end
 
   # Call all the crawlers and aggregate the results

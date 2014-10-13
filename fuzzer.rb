@@ -171,4 +171,3 @@ end
 
 fuzzer = Fuzzer.new
 fuzzer.fuzz
-

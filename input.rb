@@ -1,15 +1,12 @@
 #intended to be subclassed by specific kinds of inputs
 class Input
+  include Comparable
   attr_reader :uri
-  # attr_reader :type
   attr_reader :key
-  attr_reader :initial_value
 
-  def initialize(uri, key, initial_value)
+  def initialize(uri, key)
     @uri = uri
-    # @type = type
     @key = key
-    @initial_value = initial_value
   end
 
   # Override to provide better human readable description of
@@ -17,37 +14,51 @@ class Input
     {:type => self.class.name, :uri => @uri, :key => @key, :initial_value => @initial_value}.to_s
   end
 
-end
-
-class GETParamInput < Input
-  def to_s
-    "GET url parameter on #{uri} with key=#{@key}, defaulted to #{@initial_value}"
-  end
-end
-
-class FormFieldInput < Input
-  attr_reader :method
-  attr_reader :type
-  attr_reader :on_url
-
-  def initialize(uri, key, initial_value, field_type, method, on_url)
-    super(uri, key, initial_value)
-    @method = method
-    @field_type = field_type
-    @on_url = on_url
+  def hash
+    {:uri => @uri, :key => @key, :type => self.class}.hash
   end
 
+  def eql?(other)
+    hash == other.hash
+  end
+
+  def <=>(other)
+    urlComp = uri.to_s <=> other.uri.to_s
+    return urlComp unless urlComp == 0
+    classComp = self.class.name <=> other.class.name
+    return classComp unless classComp == 0
+    return key <=> other.key      
+  end
+
+end
+
+class HTTPParamInput < Input
+  attr_reader :verb
+
+  def initialize(uri, key, method)
+
+    #remove params and hash from uri
+    noParamUri = uri.to_s.sub(/[\?#].*$/, '')
+
+    super(noParamUri, key)
+    @verb = method
+  end
+
   def to_s
-    "#{@method} #{key} to #{@uri} from #{@on_url}. Defaulted to \"#{@initial_value}\" from a #{@field_type} field."
+    "#{@verb} \"#{key}\" to #{@uri}"
+  end
+
+  def hash
+    {:uri => @uri, :key => @key, :type => self.class, :verb => @verb}.hash
   end
 end
 
 class CookieInput < Input
 	def to_s
-		"Cookie #{key} from #{uri} with value #{initial_value}"
+		"Cookie \"#{key}\""
 	end
   def hash
-    {:type => self.class.name, :uri => @uri, :key => @key, :initial_value => @initial_value}.hash
+    {:type => self.class.name, :key => @key}.hash
   end
   
   def eql?(other)

@@ -96,9 +96,9 @@ class Fuzzer
 
     form = page.form()
 
-    #Not sure what the actual name and password are, so let's hack in as admin!
-    form.username = ''
-    form.password = "' or userid = 3 or 'x' = '"
+    #Not sure what the actual name and password are.
+    form.username = 'admin'
+    form.password = 'password'
 
     $agent.submit(form, form.buttons.first)
   end
@@ -108,7 +108,7 @@ class Fuzzer
     root = URI(root) unless root.is_a?(URI)
     $urls << root
 
-    new_urls = @master_crawler.discover_urls(root)
+    new_urls = @master_crawler.discover_urls(root, @options[:url])
 
     new_urls.each do |new_url|
 
@@ -116,6 +116,7 @@ class Fuzzer
         if !new_url.to_s.include? 'logout'
           crawl(new_url)
         end
+
       end
 
     end
@@ -133,33 +134,40 @@ class Fuzzer
         # continue
       when 'dvwa'
         loginDVWA
-      when 'bodgeit'
+      when 'bodgit'
         loginBodgeIt
       else
         puts "Not a valid authentication type: #{@options[:custom_auth]}"
         exit
     end
 
+    unless @options[:url].to_s.end_with? '/'
+      @options[:url] = @options[:url].to_s + '/'
+    end
+
+    #crawl_word_list(@options[:words_file])
+
+    @options[:url]
+
     crawl(@options[:url])
 
-    puts "\n"*2
+    puts "\n"*5
 
-    puts "Links\n#{"="*6}"
+    puts 'Links'
     $urls.each {|url| puts url}
 
-    puts "\n"*2
+    puts "\n"*5
 
     $urls.each {|url| find_inputs(url)}
 
-    puts "Inputs\n#{"="*6}"
-    @inputs
-    .sort
-    .each {|input| puts input}
+    puts 'Inputs'
+    @inputs.each {|input| puts input}
 
+    #puts 'Cookies'
+    #$agent.cookies.each{|cookie| pp cookie}
   end
 
 end
 
 fuzzer = Fuzzer.new
 fuzzer.fuzz
-

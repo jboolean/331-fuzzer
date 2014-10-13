@@ -96,7 +96,7 @@ class Fuzzer
 
     form = page.form()
 
-    #Not sure what the actual name and password are.
+    #Not sure what the actual name and password are, so let's hack in as admin!
     form.username = ''
     form.password = "' or userid = 3 or 'x' = '"
 

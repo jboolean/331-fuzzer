@@ -50,6 +50,16 @@ class Fuzzer
         options[:words_file] = filename
       end
 
+      opts.on('-w', '--vectors FILE',
+        'Newline-delimited file of common exploits to vulnerabilities.') do |filename|
+        options[:vector_file] = filename
+      end
+
+      opts.on('-w', '--sensitive FILE',
+        'Newline-delimited file data that should never be leaked. Its assumed that this data is in the applications database (e.g. test data), but is not reported in any response.') do |filename|
+        options[:sensitive_file] = filename
+      end
+
       #TODO: test options in test mode
 
       opts.on('-h', '--help', 'Display this message.') do
@@ -126,28 +136,9 @@ class Fuzzer
     @inputs.merge(@master_input_finder.discover_inputs(root))
   end
 
-  def fuzz
-    @options = Fuzzer.parse_args
+  def discover
 
-    case @options[:custom_auth]
-      when nil
-        # continue
-      when 'dvwa'
-        loginDVWA
-      when 'bodgit'
-        loginBodgeIt
-      else
-        puts "Not a valid authentication type: #{@options[:custom_auth]}"
-        exit
-    end
-
-    unless @options[:url].to_s.end_with? '/'
-      @options[:url] = @options[:url].to_s + '/'
-    end
-
-    #crawl_word_list(@options[:words_file])
-
-    @options[:url]
+    #crawl_word_list(@options[:url])
 
     crawl(@options[:url])
 
@@ -162,9 +153,39 @@ class Fuzzer
 
     puts 'Inputs'
     @inputs.each {|input| puts input}
+  end
 
-    #puts 'Cookies'
-    #$agent.cookies.each{|cookie| pp cookie}
+  def test_vectors
+    vectors = File.readlines(@options[:vectors])
+
+    tester = RunVectors.new(@inputs)
+
+    tester.run_tests(false, vectors)
+  end
+
+  def fuzz
+    @options = Fuzzer.parse_args
+
+    unless @options[:url].to_s.end_with? '/'
+      @options[:url] = @options[:url].to_s + '/'
+    end
+
+    case @options[:custom_auth]
+      when nil
+        # continue
+      when 'dvwa'
+        loginDVWA
+      when 'bodgit'
+        loginBodgeIt
+      else
+        puts "Not a valid authentication type: #{@options[:custom_auth]}"
+        exit
+    end
+
+    discover
+
+    test_vectors
+
   end
 
 end

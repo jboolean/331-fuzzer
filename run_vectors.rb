@@ -27,9 +27,9 @@ class RunVectors
 
           page = form.submit
 
-          if page.contents.to_s.include? '<' || page.contents.to_s.include? '>'
-            $possibleVulnerabilities << ('Vulnerability found at ' + page.name + ' in field' + form.field.name)
-          end
+          #if page.contents.to_s.include? '<' || page.contents.to_s.include? '>'
+          #  $possibleVulnerabilities << ('Vulnerability found at ' + page.name + ' in field' + form.field.name)
+          #end
         end
       end
     end

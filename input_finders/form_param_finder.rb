@@ -30,6 +30,10 @@ class FormParamInputFinder < InputFinder
       end
     end
 
+    inputs.each do |input|
+
+    end
+
     inputs
 
   end

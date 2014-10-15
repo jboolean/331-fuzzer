@@ -5,6 +5,7 @@ require 'set'
 require_relative 'crawlers/master'
 require_relative 'crawlers/page_guesser'
 require_relative 'input_finders/master'
+require_relative 'run_vectors'
 require_relative 'input'
 
 
@@ -13,6 +14,7 @@ class Fuzzer
 
   def initialize
     $agent = Mechanize.new
+    $possibleVulnerabilities = Set.new
     @master_crawler = MasterCrawler.new
     @master_input_finder = MasterInputFinder.new
 
@@ -48,6 +50,16 @@ class Fuzzer
       opts.on('-w', '--common-words FILE', 
         'Newline-delimited file of common words to be used in page guessing and input guessing.') do |filename|
         options[:words_file] = filename
+      end
+
+      opts.on('-w', '--vectors FILE',
+        'Newline-delimited file of common exploits to vulnerabilities.') do |filename|
+        options[:vector_file] = filename
+      end
+
+      opts.on('-w', '--sensitive FILE',
+        'Newline-delimited file data that should never be leaked. Its assumed that this data is in the applications database (e.g. test data), but is not reported in any response.') do |filename|
+        options[:sensitive_file] = filename
       end
 
       #TODO: test options in test mode
@@ -126,8 +138,43 @@ class Fuzzer
     @inputs.merge(@master_input_finder.discover_inputs(root))
   end
 
+  def discover
+
+    #crawl_word_list(@options[:url])
+
+    crawl(@options[:url])
+
+    puts "\n"*5
+
+    puts 'Links'
+    $urls.each {|url| puts url}
+
+    puts "\n"*5
+
+    $urls.each do |url|
+      unless url.to_s.include? 'logout'
+        find_inputs(url)
+      end
+    end
+
+    puts 'Inputs'
+    @inputs.each {|input| puts input}
+  end
+
+  def test_vectors
+    vectors = File.readlines(@options[:vector_file])
+
+    tester = RunVectors.new(@inputs)
+
+    tester.run_tests(false, vectors)
+  end
+
   def fuzz
     @options = Fuzzer.parse_args
+
+    unless @options[:url].to_s.end_with? '/'
+      @options[:url] = @options[:url].to_s + '/'
+    end
 
     case @options[:custom_auth]
       when nil
@@ -141,30 +188,12 @@ class Fuzzer
         exit
     end
 
-    unless @options[:url].to_s.end_with? '/'
-      @options[:url] = @options[:url].to_s + '/'
-    end
+    discover
 
-    #crawl_word_list(@options[:words_file])
+    loginDVWA
 
-    @options[:url]
+    test_vectors
 
-    crawl(@options[:url])
-
-    puts "\n"*5
-
-    puts 'Links'
-    $urls.each {|url| puts url}
-
-    puts "\n"*5
-
-    $urls.each {|url| find_inputs(url)}
-
-    puts 'Inputs'
-    @inputs.each {|input| puts input}
-
-    #puts 'Cookies'
-    #$agent.cookies.each{|cookie| pp cookie}
   end
 
 end

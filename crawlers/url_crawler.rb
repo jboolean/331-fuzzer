@@ -11,7 +11,7 @@ class URLCrawler < Crawler
   # host: the website to stay on
   # Get an array of unique URLs available from the root url
   def discover_urls(root, host)
-    puts "Crawling #{root.to_s}"
+    #puts "Crawling #{root.to_s}"
 
     if root.is_a? URI
       rootLocal = root

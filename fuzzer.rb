@@ -5,6 +5,7 @@ require 'set'
 require_relative 'crawlers/master'
 require_relative 'crawlers/page_guesser'
 require_relative 'input_finders/master'
+require_relative 'run_vectors'
 require_relative 'input'
 
 
@@ -13,6 +14,7 @@ class Fuzzer
 
   def initialize
     $agent = Mechanize.new
+    $possibleVulnerabilities = Set.new
     @master_crawler = MasterCrawler.new
     @master_input_finder = MasterInputFinder.new
 
@@ -149,14 +151,18 @@ class Fuzzer
 
     puts "\n"*5
 
-    $urls.each {|url| find_inputs(url)}
+    $urls.each do |url|
+      unless url.to_s.include? 'logout'
+        find_inputs(url)
+      end
+    end
 
     puts 'Inputs'
     @inputs.each {|input| puts input}
   end
 
   def test_vectors
-    vectors = File.readlines(@options[:vectors])
+    vectors = File.readlines(@options[:vector_file])
 
     tester = RunVectors.new(@inputs)
 
@@ -183,6 +189,8 @@ class Fuzzer
     end
 
     discover
+
+    loginDVWA
 
     test_vectors
 

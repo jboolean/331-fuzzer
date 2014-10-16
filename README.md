@@ -3,11 +3,11 @@
 ## Setup 
 If your system does not have Ruby installed follow the instructions located on this page: https://www.ruby-lang.org/en/installation/
 
-Once Ruby is installed run `gem install bundler`. In the directory where the project is located run `bundle install`. This will install all other dependencies.
+Once Ruby is installed run `./setup.sh` in the directory where the project is located.
 
 ## Usage 
 
-To run the project run `bundle exec ruby fuzzer.rb COMMAND URL [args]`
+To run the project run `./fuzzer.sh COMMAND URL [args]`
 
     COMMANDS:
       discover  Output a comprehensive, human-readable list of all discovered inputs to the system. Techniques include both crawling and guessing. 
@@ -28,10 +28,10 @@ To run the project run `bundle exec ruby fuzzer.rb COMMAND URL [args]`
 
     ### Examples:
       # Discover inputs 
-      bundle exec ruby fuzzer.rb discover http://localhost:8080 --common-words=mywords.txt
+      ./fuzzer.sh discover http://localhost:8080 --common-words=mywords.txt
 
       # Discover inputs to DVWA using our hard-coded authentication 
-      bundle exec ruby fuzzer.rb discover http://localhost:8080 --common-words=mywords.txt
+      ./fuzzer.sh discover http://localhost:8080 --common-words=mywords.txt
 
       # Discover and Test DVWA without randomness
-      bundle exec ruby fuzzer.rb test http://localhost:8080 --custom-auth=dvwa --common-words=words.txt --vectors=vectors.txt --sensitive=creditcards.txt --random=false
+      ./fuzzer.sh test http://localhost:8080 --custom-auth=dvwa --common-words=words.txt --vectors=vectors.txt --sensitive=creditcards.txt --random=false

@@ -56,25 +56,23 @@ class Fuzzer
         options[:words_file] = filename
       end
 
-      if options[:mode] == :test
 
-        opts.on('--vectors=FILE',
-          'Newline-delimited file of common exploits to vulnerabilities.') do |filename|
-          options[:vector_file] = filename
-        end
+      opts.on('--vectors=FILE',
+        'Newline-delimited file of common exploits to vulnerabilities.') do |filename|
+        options[:vector_file] = filename
+      end
 
-        opts.on('--sensitive=FILE',
-          'Newline-delimited file data that should never be leaked. Its assumed that this data is in the applications database (e.g. test data), but is not reported in any response.') do |filename|
-          options[:sensitive_file] = filename
-        end
+      opts.on('--sensitive=FILE',
+        'Newline-delimited file data that should never be leaked. Its assumed that this data is in the applications database (e.g. test data), but is not reported in any response.') do |filename|
+        options[:sensitive_file] = filename
+      end
 
-        opts.on('--random', 'When off, try each input to each page systematically.  When on, choose a random page, then a random input field and test all vectors. Default: false.') do |isRandom|
-          options[:random] = isRandom
-        end
+      opts.on('--random', 'When off, try each input to each page systematically.  When on, choose a random page, then a random input field and test all vectors. Default: false.') do |isRandom|
+        options[:random] = isRandom
+      end
 
-        opts.on('--slow TIMEOUT', Numeric, 'Number of milliseconds considered when a response is considered "slow". Default is 500 milliseconds') do |slowVal|
-          options[:slow] = slowVal
-        end
+      opts.on('--slow TIMEOUT', Numeric, 'Number of milliseconds considered when a response is considered "slow". Default is 500 milliseconds') do |slowVal|
+        options[:slow] = slowVal
       end
 
       opts.on('-h', '--help', 'Display this message.') do

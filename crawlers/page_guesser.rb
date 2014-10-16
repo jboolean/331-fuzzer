@@ -8,33 +8,38 @@ require_relative 'crawler'
 class PageGuesser < Crawler
 
   def initialize(words)
-    @extensions = [nil, 'php', 'html', 'jsp', 'action']
+    @suffixes = ['', '.php', '.html', '.jsp', '.action']
     @words = words
   end
 
-  # root: a URI of the root url
-  # Get an array of unique URLs available from the root url
-  def discover_urls(root)
-    # root = URI(root) unless root.is_a? URI
+  # roots an Enumerable of paths to join onto
+  def discover_urls(roots)
+
+    attempted = Set.new
 
     found_pages = Set.new
 
-    @words.each do |word|
-      @extensions.each do |ext|
+    roots.each do |root|
+      @words.each do |word|
+        @suffixes.each do |suffix|
 
-        guess_path = ext.nil? ? word : "#{word}.#{ext}"
-        guess_uri = URI.join(root, guess_path)
+          guess_uri = URI.join(root, "#{word}#{suffix}")
+          next if attempted.add(guess_uri).nil?
 
-        found = true
+          found = true
 
-        begin
-          page = $agent.get(guess_uri)
-        rescue Mechanize::ResponseCodeError => e
-          found = e.response_code.to_i != 404
+          $agent.transact do
+
+            begin
+              # puts "Attempting  #{guess_uri}"
+              $agent.get(guess_uri)
+            rescue Mechanize::ResponseCodeError => e
+              found = e.response_code.to_i != 404
+            end
+
+            found_pages << guess_uri if found
+          end
         end
-
-        found_pages << guess_uri if found
-
       end
     end
 

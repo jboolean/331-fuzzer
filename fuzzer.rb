@@ -20,7 +20,7 @@ class Fuzzer
     @master_input_finder = MasterInputFinder.new
 
     # A set of URIs
-    $urls = Set.new
+    @urls = Set.new
 
     @inputs = Set.new
   end
@@ -118,15 +118,14 @@ class Fuzzer
 
   def discover
 
-    #crawl_word_list(@options[:url])
-
     crawl(@options[:url])
+    crawl_word_list
 
     print_header('Links')
 
-    $urls.each {|url| puts url}
+    @urls.each {|url| puts url}
 
-    $urls.each do |url|
+    @urls.each do |url|
       unless url.to_s.include? 'logout'
         find_inputs(url)
       end
@@ -149,26 +148,30 @@ class Fuzzer
 
   end
 
-  def crawl_word_list(root)
+  def crawl_word_list
+    if @options[:words_file].nil?
+      return nil
+    end
+
     words = readlines_and_clean(@options[:words_file])
     words.each {|word| word.strip!}
 
     guesser = PageGuesser.new(words)
 
-    $urls.merge(guesser.discover_urls(root))
+    @urls.merge(guesser.discover_urls(@urls))
   end
 
 
   # crawl deeply with the @master_crawler from root, adding to @urls.
   def crawl(root)
     root = URI(root) unless root.is_a?(URI)
-    $urls << root
+    @urls << root
 
     new_urls = @master_crawler.discover_urls(root)
 
     new_urls.each do |new_url|
 
-      unless $urls.add?(new_url).nil?
+      unless @urls.add?(new_url).nil?
         if !new_url.to_s.include? 'logout'
           crawl(new_url)
         end

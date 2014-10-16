@@ -26,6 +26,8 @@ class FuzzTester
       inputsList = inputs.to_a.sort_by {|i| i.uri}
     end
 
+    @agent.read_timeout = 1000;
+
     inputsList.each do |input|
       vectors.each do |vector|
         @agent.transact do
@@ -39,7 +41,7 @@ class FuzzTester
             check_sensitives(results, input, vector)
             check_sanitization(results, input, vector)
 
-          rescue Timeout::Error, Net::ReadTimeout
+          rescue Timeout::Error
             results << TestResult.new(input, vector, SLOW)
           rescue Mechanize::ResponseCodeError => e
             results << TestResult.new(input, vector, ERROR, e.response_code) if e.response_code != 404

@@ -15,7 +15,6 @@ class Fuzzer
 
   def initialize
     $agent = Mechanize.new
-    $possibleVulnerabilities = Set.new
     @master_crawler = URLCrawler.new
     @master_input_finder = MasterInputFinder.new
 

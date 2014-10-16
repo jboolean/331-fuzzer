@@ -2,7 +2,7 @@ require 'optparse'
 require 'pp'
 require 'set'
 
-require_relative 'crawlers/master'
+require_relative 'crawlers/url_crawler'
 require_relative 'crawlers/page_guesser'
 require_relative 'input_finders/master'
 require_relative 'input'
@@ -16,7 +16,7 @@ class Fuzzer
   def initialize
     $agent = Mechanize.new
     $possibleVulnerabilities = Set.new
-    @master_crawler = MasterCrawler.new
+    @master_crawler = URLCrawler.new
     @master_input_finder = MasterInputFinder.new
 
     # A set of URIs
@@ -164,7 +164,7 @@ class Fuzzer
     root = URI(root) unless root.is_a?(URI)
     $urls << root
 
-    new_urls = @master_crawler.discover_urls(root, @options[:url])
+    new_urls = @master_crawler.discover_urls(root)
 
     new_urls.each do |new_url|
 

@@ -19,14 +19,16 @@ class TestResult
   attr_reader :value
   attr_reader :type
 
-  def initialize(input, value, type)
+  def initialize(input, value, type, other='')
     @input = input
     @value = value
     @type = type
+    @other = other
   end
 
   def to_s
-    "#{ERROR_DESCRIPTIONS[@type]} when \"#{@value}\" was injected into #{@input}"
+    more = @other.empty? ? '' : "(#{@other})"
+    "#{ERROR_DESCRIPTIONS[@type]} when \"#{@value}\" was injected into #{@input} #{more}"
   end
 
 end

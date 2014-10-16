@@ -76,6 +76,11 @@ class HTTPParamInput < Input
 end
 
 class CookieInput < Input
+  def initialize(uri, key, cookie)
+    super(uri, key)
+    @original_cookie = cookie
+  end
+
 	def to_s
 		"Cookie \"#{key}\""
 	end
@@ -84,6 +89,17 @@ class CookieInput < Input
   end
   
   def eql?(other)
-	hash == other.hash
+    hash == other.hash
+  end
+
+  def inject(agent, value)
+    cookie = HTTP::Cookie.new :domain => @original_cookie.domain, :name => @key, :value => value, :path => @original_cookie.path
+
+    # deletes any matching cookies
+    agent.cookie_jar.delete(@original_cookie) << cookie
+    agent.get(@uri)
+
+    #put things back as they were
+    agent.cookie_jar.delete(cookie) << @original_cookie
   end
 end

@@ -33,7 +33,7 @@ class FuzzTester
           # puts "Testing #{input} with \"#{vector}\""
 
           begin
-            Timeout::timeout((1.0*@timeout)/1000.0) {
+            pageResult = Timeout::timeout((1.0*@timeout)/1000.0) {
               input.inject(@agent, vector)
             }
             check_sensitives(results, input, vector)
@@ -42,8 +42,7 @@ class FuzzTester
           rescue Timeout::Error, Net::ReadTimeout
             results << TestResult.new(input, vector, SLOW)
           rescue Mechanize::ResponseCodeError => e
-            pp e
-            results << TestResult.new(input, vector, ERROR)
+            results << TestResult.new(input, vector, ERROR, e.response_code) if e.response_code != 404
           rescue Exception => e
             puts "ERROR: An unexpected error (#{e.class}) occured while testing input #{input} with vector #{vector}: #{e}"
             pp e.backtrace
@@ -65,7 +64,7 @@ class FuzzTester
 
     @sensitives.each do |sensitive_datum|
       if pageContent.include? sensitive_datum.downcase
-        results << TestResult.new(input, vector, SENSITIVE_EXPOSED)
+        results << TestResult.new(input, vector, SENSITIVE_EXPOSED, "\"#{sensitive_datum}\"")
       end
     end
   end

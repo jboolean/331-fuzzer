@@ -1,4 +1,1 @@
-MySQL
-Error
-Exception
 Syntax

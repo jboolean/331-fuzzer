@@ -1,2 +1,4 @@
 '
-<script>exploited=true</script>
+<script>alert("XSS")</script>
+debug
+0

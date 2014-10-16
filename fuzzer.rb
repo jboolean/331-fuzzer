@@ -28,7 +28,7 @@ class Fuzzer
   def self.parse_args
     options = {
       :random => false,
-      :slow => 500
+      :slow => 1500
     }
 
     mode = ARGV.shift

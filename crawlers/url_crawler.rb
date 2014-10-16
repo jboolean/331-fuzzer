@@ -32,6 +32,6 @@ class URLCrawler < Crawler
       .map {|l| URI.join(page.uri.to_s , l.uri) }
 
     #don't go off the domain or include duplicates
-    Set.new resolved_uris.keep_if {|uri| uri.to_s.start_with? host}.keep_if {|uri| !$urls.include? uri}
+    Set.new resolved_uris.keep_if {|uri| uri.to_s.start_with? host}
   end
 end

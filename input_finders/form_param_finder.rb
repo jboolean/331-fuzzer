@@ -11,9 +11,8 @@ class FormParamInputFinder < InputFinder
 
     begin
       page = $agent.get(root)
-      # root = page.canonical_uri
-    rescue Mechanize::ResponseCodeError => e
-      #puts e
+    rescue Mechanize::ResponseCodeError, Mechanize::RedirectLimitReachedError
+      # TODO: Maybe logs erros as possible vulnerabilities?
       return Set.new
     end
 
@@ -22,7 +21,7 @@ class FormParamInputFinder < InputFinder
     page.forms.each do |form|
       action_resolved = form.action.nil? ? nil : URI.join(root, form.action)
       method = form.method
-      method = method.upcase.to_sym unless method.nil?
+      method = method.downcase.to_sym unless method.nil?
 
 
       form.fields.each do |form_field|

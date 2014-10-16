@@ -5,8 +5,9 @@ require 'set'
 require_relative 'crawlers/master'
 require_relative 'crawlers/page_guesser'
 require_relative 'input_finders/master'
-require_relative 'run_vectors'
 require_relative 'input'
+require_relative 'authenticator'
+require_relative 'tester'
 
 
 class Fuzzer
@@ -25,13 +26,16 @@ class Fuzzer
   end
 
   def self.parse_args
-    options = Hash.new
+    options = {
+      :random => false,
+      :slow => 500
+    }
 
     mode = ARGV.shift
 
     if !mode || ![:discover, :test].include?(mode.to_sym)
       puts 'Invalid mode. Must specify discover or test.'
-      exit
+      exit 1
     else
       options[:mode] = mode.to_sym
     end
@@ -47,22 +51,31 @@ class Fuzzer
         options[:custom_auth] = ca
       end
 
-      opts.on('-w', '--common-words FILE', 
+      opts.on('-w', '--common-words=FILE', 
         'Newline-delimited file of common words to be used in page guessing and input guessing.') do |filename|
         options[:words_file] = filename
       end
 
-      opts.on('-w', '--vectors FILE',
-        'Newline-delimited file of common exploits to vulnerabilities.') do |filename|
-        options[:vector_file] = filename
-      end
+      if options[:mode] == :test
 
-      opts.on('-w', '--sensitive FILE',
-        'Newline-delimited file data that should never be leaked. Its assumed that this data is in the applications database (e.g. test data), but is not reported in any response.') do |filename|
-        options[:sensitive_file] = filename
-      end
+        opts.on('--vectors=FILE',
+          'Newline-delimited file of common exploits to vulnerabilities.') do |filename|
+          options[:vector_file] = filename
+        end
 
-      #TODO: test options in test mode
+        opts.on('--sensitive=FILE',
+          'Newline-delimited file data that should never be leaked. Its assumed that this data is in the applications database (e.g. test data), but is not reported in any response.') do |filename|
+          options[:sensitive_file] = filename
+        end
+
+        opts.on('--random', 'When off, try each input to each page systematically.  When on, choose a random page, then a random input field and test all vectors. Default: false.') do |isRandom|
+          options[:random] = isRandom
+        end
+
+        opts.on('--slow TIMEOUT', Numeric, 'Number of milliseconds considered when a response is considered "slow". Default is 500 milliseconds') do |slowVal|
+          options[:slow] = slowVal
+        end
+      end
 
       opts.on('-h', '--help', 'Display this message.') do
         puts opts
@@ -83,8 +96,61 @@ class Fuzzer
 
   end
 
+  public 
+
+  def fuzz
+    @options = Fuzzer.parse_args
+
+    unless @options[:custom_auth].nil?
+      CustomAuthenticator.authenticate(@options[:custom_auth].to_sym, $agent)
+    end
+
+    discover()
+
+    if @options[:mode] == :test
+      test()
+    end
+
+  end
+
+  private
+
+
+  def discover
+
+    #crawl_word_list(@options[:url])
+
+    crawl(@options[:url])
+
+    print_header('Links')
+
+    $urls.each {|url| puts url}
+
+    $urls.each do |url|
+      unless url.to_s.include? 'logout'
+        find_inputs(url)
+      end
+    end
+
+    print_header('Inputs')
+
+    @inputs.each {|input| puts input}
+  end
+
+  def test
+    vectors = readlines_and_clean(@options[:vector_file])
+    sensitives = readlines_and_clean(@options[:sensitive_file])
+
+    tester = FuzzTester.new($agent, sensitives, @options[:slow])
+    testResults = tester.test(@inputs, vectors, @options[:random])
+
+    print_header('Possible Attack Vectors')
+    testResults.each {|r| puts r}
+
+  end
+
   def crawl_word_list(root)
-    words = File.readlines(@options[:words_file])
+    words = readlines_and_clean(@options[:words_file])
     words.each {|word| word.strip!}
 
     guesser = PageGuesser.new(words)
@@ -92,28 +158,6 @@ class Fuzzer
     $urls.merge(guesser.discover_urls(root))
   end
 
-  def loginDVWA
-    page = $agent.get('http://127.0.0.1/dvwa/')
-
-    form = page.form()
-	
-    form.username = 'admin'
-    form.password = 'password'
-
-    $agent.submit(form, form.buttons.first)
-  end
-
-  def loginBodgeIt
-    page = $agent.get('http://127.0.0.1:8080/bodgeit/login.jsp')
-
-    form = page.form()
-
-    #Not sure what the actual name and password are.
-    form.username = 'admin'
-    form.password = 'password'
-
-    $agent.submit(form, form.buttons.first)
-  end
 
   # crawl deeply with the @master_crawler from root, adding to @urls.
   def crawl(root)
@@ -138,63 +182,17 @@ class Fuzzer
     @inputs.merge(@master_input_finder.discover_inputs(root))
   end
 
-  def discover
-
-    #crawl_word_list(@options[:url])
-
-    crawl(@options[:url])
-
-    puts "\n"*5
-
-    puts 'Links'
-    $urls.each {|url| puts url}
-
-    puts "\n"*5
-
-    $urls.each do |url|
-      unless url.to_s.include? 'logout'
-        find_inputs(url)
-      end
-    end
-
-    puts 'Inputs'
-    @inputs.each {|input| puts input}
+  def readlines_and_clean(file)
+    File.readlines(file)
+    .map {|l| l.strip}
+    .keep_if {|l| !l.empty?}
   end
 
-  def test_vectors
-    vectors = File.readlines(@options[:vector_file])
-
-    tester = RunVectors.new(@inputs)
-
-    tester.run_tests(false, vectors)
+  def print_header(message)
+    puts "\n#{message}\n#{'='*5}"
   end
 
-  def fuzz
-    @options = Fuzzer.parse_args
 
-    unless @options[:url].to_s.end_with? '/'
-      @options[:url] = @options[:url].to_s + '/'
-    end
-
-    case @options[:custom_auth]
-      when nil
-        # continue
-      when 'dvwa'
-        loginDVWA
-      when 'bodgit'
-        loginBodgeIt
-      else
-        puts "Not a valid authentication type: #{@options[:custom_auth]}"
-        exit
-    end
-
-    discover
-
-    loginDVWA
-
-    test_vectors
-
-  end
 
 end
 

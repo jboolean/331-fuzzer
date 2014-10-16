@@ -1,0 +1,4 @@
+MySQL
+Error
+Exception
+Syntax

@@ -12,7 +12,7 @@ class GETParamInputFinder < InputFinder
     inputs = Set.new
 
     root.query_params.each do |k, v|
-      inputs << HTTPParamInput.new(root, k, :GET)
+      inputs << HTTPParamInput.new(root, k, :get)
     end
 
     inputs

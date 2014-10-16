@@ -5,7 +5,11 @@ class Input
   attr_reader :key
 
   def initialize(uri, key)
+    unless uri.is_a? String
+      uri = uri.to_s
+    end
     @uri = uri
+
     @key = key
   end
 
@@ -30,6 +34,11 @@ class Input
     return key <=> other.key      
   end
 
+  # Override me!
+  def inject(agent, value)
+    throw "This input is not usable for testing."
+  end
+
 end
 
 class HTTPParamInput < Input
@@ -45,11 +54,24 @@ class HTTPParamInput < Input
   end
 
   def to_s
-    "#{@verb} \"#{key}\" to #{@uri}"
+    "#{@verb.to_s.upcase} \"#{key}\" on #{@uri}"
   end
 
   def hash
     {:uri => @uri, :key => @key, :type => self.class, :verb => @verb}.hash
+  end
+
+  def inject(agent, value) 
+    case @verb
+    when :get
+      agent.get(@uri, {@key.to_sym => value})
+    when :post
+      agent.post(@uri, {@key.to_sym => value})
+    when :put
+      agent.put(@uri, value)
+    else
+      agent.request_with_entity(@verb, @uri, value)
+    end
   end
 end
 

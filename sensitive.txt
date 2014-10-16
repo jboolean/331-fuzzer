@@ -1,6 +1,0 @@
-MySQL
-syntax
-exception
-SQL
-javascript
-no such method

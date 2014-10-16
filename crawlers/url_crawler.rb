@@ -10,7 +10,7 @@ class URLCrawler < Crawler
   # root: a URI of the root url
   # host: the website to stay on
   # Get an array of unique URLs available from the root url
-  def discover_urls(root, host)
+  def discover_urls(root)
     #puts "Crawling #{root.to_s}"
 
     if root.is_a? URI
@@ -32,6 +32,6 @@ class URLCrawler < Crawler
       .map {|l| URI.join(page.uri.to_s , l.uri) }
 
     #don't go off the domain or include duplicates
-    Set.new resolved_uris.keep_if {|uri| uri.to_s.start_with? host}.keep_if {|uri| !$urls.include? uri}
+    Set.new resolved_uris.keep_if {|uri| URI(uri).host == rootLocal.host}
   end
 end

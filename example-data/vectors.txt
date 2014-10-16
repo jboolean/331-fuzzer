@@ -1,0 +1,4 @@
+'
+<script>alert("XSS")</script>
+debug
+0
